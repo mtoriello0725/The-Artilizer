@@ -13,6 +13,9 @@ import spotipy.util as util
 import webbrowser
 from json.decoder import JSONDecodeError
 
+# Import artilizer_function
+import artilizer_function as af
+
 username = sys.argv[1]
 
 # Ask User for API credentials
@@ -48,51 +51,7 @@ sp = spotipy.Spotify(auth=token)
 # ------------------------------------------------------------------------------------
 # Define Function here: 
 
-def artilyzer(artist_id):
 
-	#For now use sp.artist_top_tracks
-	top_tracks = sp.artist_top_tracks(artist_id)
-	tracklist = []
-
-	for song in top_tracks['tracks']:
-		tracklist.append(song['id'])
-
-	tracklist_features = sp.audio_features(tracklist)
-
-	df_tracklist_features = pd.DataFrame(tracklist_features)
-
-	# from here, need to set the index and drop unnecessary columns (see jupyter notebook)
-	# Also should consider adding more columns based on 'id'
-	# song popularity and song name is something missing, that can be added with 'id'
-	# maybe find the max value for each category, inform user of song to check out.
-
-
-	# Remember the goal here is to see if there is high variance, or std in the tracklist
-	# This ultimately can determine if an artist explores, or sticks to a formula
-
-	# for now use the top_tracks, but if this program runs quickly, explore entire discogrophy
-	# discover similar artists as well, and compare analysis... do they vary from their competitors.
-
-
-
-
-	return print(df_tracklist_features.head())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
 
 # -------------------------------------------------------------------------------------
 
@@ -151,7 +110,7 @@ while True:
 		# set function input to artist_id
 		artist_id = artist_proposed['id']
 
-		print(artilyzer(artist_id))
+		print(af.artilyzer(artist_id, token))
 		print(f'Analysis should have appeared on your machine using {artist_id}')
 
 	else:
