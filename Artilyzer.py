@@ -1,28 +1,27 @@
 ### Artilyzer
 
+# Import necessary packages
 import os
 import sys
-import numpy as np
-import pandas as pd
-import matplotlib as plt
-import seaborn as sns
-
 import json
 import spotipy
 import spotipy.util as util
-import webbrowser
 from json.decoder import JSONDecodeError
+
+# Import API_config file
+from config import *
 
 # Import artilizer_function
 import artilizer_function as af
+
 
 username = sys.argv[1]
 
 # Ask User for API credentials
 #-------------------------------------------------------------
-client_id = input('Please enter client_id from Spotify_Dev Page: ')
-client_secret = input('Please enter client_secret from Spotify_Dev Page: ')
-redirect_uri = input('Please enter redirect_uri you will use: ')
+# client_id = input('Please enter client_id from Spotify_Dev Page: ')
+# client_secret = input('Please enter client_secret from Spotify_Dev Page: ')
+# redirect_uri = input('Please enter redirect_uri you will use: ')
 
 # Spotipy Permissions to access
 #-------------------------------------------------------------

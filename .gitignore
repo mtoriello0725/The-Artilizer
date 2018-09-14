@@ -2,4 +2,6 @@
 __pycache__/*
 */.ipynb_checkpoints/*
 .ipynb_checkpoints/*
+
+.cache-12166626141
 config.py
