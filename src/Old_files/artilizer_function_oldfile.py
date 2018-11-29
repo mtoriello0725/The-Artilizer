@@ -1,4 +1,4 @@
-# Import a;l necessary packages
+# Import all necessary packages
 
 import numpy as np
 import pandas as pd

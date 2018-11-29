@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 username = sys.argv[1]
 
 # Create sqlite connection to genres.sqlite
-engine = create_engine("sqlite:///Resources/genres.sqlite", echo=False)
+engine = create_engine("sqlite:///../Resources/genres.sqlite", echo=False)
 conn = engine.connect()
 
 # import scopelist (will condense later)
