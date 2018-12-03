@@ -72,12 +72,18 @@ def artistDataCollection(artist):
 
 
 # Folowing routes pull data from sqlite for each attribute collected
-@app.route("/api/artist/<artist>/<attr>")
-def artistAttrToJson(artist,attr):
+@app.route("/api/artist/<artistInput>/<attr>")
+def artistAttrToJson(artistInput,attr):
 
 	## SQLALCHEMY CODE TO PULL EACH ATTRIBUTE FROM ARTIST'S TABLE
+	sel = [
+		artist.id,
+		artist.key
+	]
 
+	results = db.session.query(*sel).filter(artist.name == artistInput)
 
+	# attrData = (data for js. Will need one for each attribute plotted.)
 
 	# Data should be in the form of 2 columns[attr, attr_count]
 		# ex: key_sig, mode
@@ -87,6 +93,10 @@ def artistAttrToJson(artist,attr):
 
 	return jsonify(attrData)
 
+# @app.route("/api/artist/complete/<artist>/")
+# def artistDataRemoval(artist):
+
+	# will need data in database at all times if making interactive chart.
 
 
 # Run the application if file is called interactively.
