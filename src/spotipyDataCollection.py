@@ -10,6 +10,8 @@ from config import *
 import numpy as np
 import pandas as pd
 
+from sqlalchemy import create_engine
+
 ###################################################################
 """ 
 This function will collect all necessary attributes to an artist's discography and store into the artist table in sqlite.
@@ -26,6 +28,10 @@ If spotify token times out, should be seemless for user as this function will re
 ###################################################################
 
 def artistCollection(artist): 
+
+	# Connect to sqlite database:
+	engine = create_engine("sqlite:///../Resources/artists.sqlite", echo=False)
+	conn = engine.connect()
 
 	# Create Scope List:
 	scope_list = ['user-read-currently-playing','user-read-playback-state',\
@@ -45,6 +51,26 @@ def artistCollection(artist):
 
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
+
+	# create keyMap and modeMap
+	keyMap = {
+	    0:"C",
+	    1:"C#/Db",
+	    2:"D",
+	    3:"D#/Eb",
+	    4:"E",
+	    5:"F",
+	    6:"F#/Gb",
+	    7:"G",
+	    8:"G#/Ab",
+	    9:"A",
+	    10:"A#/Bb",
+	    11:"B",
+	}
+	modeMap = {
+	    0:"minor",
+	    1:"major",
+	}
 
 	# query for artist
 	searchResults = sp.search(
@@ -88,7 +114,28 @@ def artistCollection(artist):
 			trackNames.append(track["name"])
 			trackNumbers.append(track["track_number"])
 
+	# Use track IDs to find all audio features in the list
+	trackFeatures = [sp.audio_features(TrackIDs[i:i+50]) for i in range(0,len(genreTrackIDs),50)]
 
+	# Merge output lists of dictionaries within trackFeatures list
+	allTrackFeatures = []
+	for i in trackFeatures:
+		allTrackFeatures = allTrackFeatures + i
+
+	# Create a DataFrame for TrackFeatures:
+	df_trackFeatures = pd.DataFrame(allTrackFeatures)
+	df_trackFeatures["name"] = trackNames
+	df_trackFeatures["track_number"] = trackNumbers
+
+	# Map df_trackFeatures key and mode:
+	df_trackFeatures["key"] = df_trackFeatures["key"].map(keyMap)
+	df_trackFeatures["mode"] = df_trackFeatures["mode"].map(modeMap)
+
+	# In artists database, append artist table:
+	df_trackFeatures.to_sql(name=artist, con=conn, if_exists="replace")
+
+	# Return message that the database has been updated for the user-requested artist:
+	return f"Artist {artist} is currently uploaded in artists database"
 
 
 
