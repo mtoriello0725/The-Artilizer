@@ -3,8 +3,7 @@ import sys
 
 ############################
 # Import functions from src
-sys.path.insert(0, "/src")
-from spotipyDataCollection import artistCollection
+from src.spotipyDataCollection import artistCollection
 ############################
 
 import sqlalchemy
@@ -24,7 +23,7 @@ import numpy as np
 
 app = Flask(__name__)
 
-## Configure sqlalchemy:
+"""## Configure sqlalchemy:
 
 # Will need to test to see if configuration should be after data is collected.
 
@@ -39,6 +38,8 @@ Base.prepare(db.engine, reflect=True)
 # Option 1. store all collected data into artist table... replace table with new data if exists.
 artistTable = Base.classes.artist
 
+"""
+
 # Could also append a tracks table with all songs ever collected, and sort by artist_id
 	# This would allow for future charts across many different artists.
 		# do track numbers have a part in song attributes?
@@ -51,7 +52,7 @@ artistTable = Base.classes.artist
 
 # home route will render standard home_page:
 @app.route("/")
-def home():
+def homePage():
 
 	return render_template("home.html")
 
@@ -62,15 +63,14 @@ def artistDisplay():
 
 	return render_template("display.html")
 
-
 # sqlite artist collection route will lead to artist_collection.py
 @app.route("/api/artist/<artist>")
 def artistDataCollection(artist):
 
 	# run artist_collection function(s) with artist input
-	return artistCollection(artist)
+	return jsonify(artistCollection(artist))
 
-
+"""
 # Folowing routes pull data from sqlite for each attribute collected
 @app.route("/api/artist/<artistInput>/<attr>")
 def artistAttrToJson(artistInput,attr):
@@ -98,7 +98,7 @@ def artistAttrToJson(artistInput,attr):
 
 	# will need data in database at all times if making interactive chart.
 
-
+"""
 # Run the application if file is called interactively.
 if __name__ == "__main__":
 	app.run()
