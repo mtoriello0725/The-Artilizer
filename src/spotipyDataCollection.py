@@ -11,9 +11,9 @@ import numpy as np
 import pandas as pd
 
 from sqlalchemy import create_engine
-
+"""
 ###################################################################
-""" 
+
 This function will collect all necessary attributes to an artist's discography and store into the artist table in sqlite.
 
 It will be called once the user inputs an artist name in search. 
@@ -24,13 +24,13 @@ If the spotify search function does not find an artist? will need to relay messa
 
 If spotify token times out, should be seemless for user as this function will refresh token.
 
-"""
 ###################################################################
+"""
 
 def artistCollection(artist): 
 
 	# Connect to sqlite database:
-	engine = create_engine("sqlite:///../Resources/artists.sqlite", echo=False)
+	engine = create_engine("sqlite:///Resources/artists.sqlite", echo=False)
 	conn = engine.connect()
 
 	# Create Scope List:
@@ -108,14 +108,14 @@ def artistCollection(artist):
 	trackNumbers = []
 
 	for albumOfTracks in albumTracks:
-		for track in albumOfTracks:
+		for track in albumOfTracks["items"]:
 			# append empty track lists. 
 			trackIDs.append(track["id"])
 			trackNames.append(track["name"])
 			trackNumbers.append(track["track_number"])
 
 	# Use track IDs to find all audio features in the list
-	trackFeatures = [sp.audio_features(TrackIDs[i:i+50]) for i in range(0,len(genreTrackIDs),50)]
+	trackFeatures = [sp.audio_features(trackIDs[i:i+50]) for i in range(0,len(trackIDs),50)]
 
 	# Merge output lists of dictionaries within trackFeatures list
 	allTrackFeatures = []
@@ -132,10 +132,11 @@ def artistCollection(artist):
 	df_trackFeatures["mode"] = df_trackFeatures["mode"].map(modeMap)
 
 	# In artists database, append artist table:
-	df_trackFeatures.to_sql(name=artist, con=conn, if_exists="replace")
-
-	# Return message that the database has been updated for the user-requested artist:
-	return f"Artist {artist} is currently uploaded in artists database"
+	try:
+		df_trackFeatures.to_sql(name=artist, con=conn, if_exists="replace")
+		return f"Artist {artist} is currently uploaded in artists database"
+	except:
+		return "Artist was NOT upload"
 
 
 
