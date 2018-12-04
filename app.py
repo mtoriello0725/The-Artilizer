@@ -1,19 +1,26 @@
 import os
 import sys
-
 ############################
 # Import functions from src
 from src.spotipyDataCollection import artistCollection
+# from config import *
 ############################
-
+# Import spotipy
+# import spotipy
+# import spotipy.util as util
+# import spotipy.oauth2 as oauth
+############################
+#Import SQLAlchemy
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-
+############################
+# Import Flask
 from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-
+############################
+# Import data processing packages.
 import pandas as pd
 import numpy as np
 
