@@ -1,26 +1,27 @@
-// query_artist_nav : input field for search in nav bar
-// query_artist_home : input field for search on home page
-
-// submit_nav
-// submit_home
 
 function submitQuery(input_id) {
 	/* send input value to route of python script */
 
+	// Assign input variable to text in appropriate search bar
 	var inputArtist = d3.select(input_id);
 
+	// Pull artist name from search bar
 	var artistValue = inputArtist.property("value");
 
-	console.log(artistValue);
-
+	// Create route name to send to flask app. 
 	var query_url = "/api/artist/"+artistValue;
 
+	// Access route with artist name as the input. Return with "Success" or "Failed" response.
 	d3.json(query_url).then(function(response) {
 		console.log(response);
 	});
 
-	// If response says successful, begin plotting functions.
-
+	// If response "success", send to plotting functions with artist as input.
+	if (response == "Success") {
+		return plotManager(artistValue);
+	} else {
+		return response;
+	}
 }
 
 // select the submit buttons
