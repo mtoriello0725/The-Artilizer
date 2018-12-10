@@ -1,3 +1,16 @@
+/* 
+This file will trigger all of the plotting functions and return
+outputs to the proper html tags on the display page. Will need to make calls for:
+
+- Mean values of each attribute
+
+- all album names (possibly album images) to visualize attributes by album
+
+- attributes by album (album names above will be trigger for album charts)
+
+- top popular songs 
+
+*/
 
 // Use the window parameters to tell javascript what the queried artist was.
 if (window.location.pathname == "/artist/display") {
@@ -6,5 +19,6 @@ if (window.location.pathname == "/artist/display") {
 	searchArtist = url.searchParams.get("artist_name");
 	console.log(searchArtist);
 
-	var test = d3.select("#testing").append("p").text("Does this testing text appear on display page");
+	// show the boxplot:
+	boxplot(searchArtist);
 }

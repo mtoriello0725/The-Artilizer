@@ -30,11 +30,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-## Configure sqlalchemy:
-DATABASE = "/Resources/artists.sqlite"
-engine = create_engine(f"sqlite://{DATABASE}", echo=False)
-conn = engine.connect()
-
 # Could also append a tracks table with all songs ever collected, and sort by artist_id
 	# This would allow for multiple users to use the application
 		# do track numbers have a part in song attributes?
@@ -84,10 +79,17 @@ def collect():
 def artistAttrToJson(artistInput):
 
 	## SQLALCHEMY CODE TO PULL EACH ATTRIBUTE FROM ARTIST'S TABLE
+
+	## Configure sqlalchemy:
+	DATABASE = "/Resources/artists.sqlite"
+	engine = create_engine(f"sqlite://{DATABASE}", echo=False)
+	conn = engine.connect()
+
+	# Pull data from sqlite connection.
 	attr_list = "acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence"
 	boxplot_df = pd.read_sql_query(f"SELECT {attr_list} FROM {artistInput}", con=conn)
 
-	
+	conn.close()
 
 	# attrData = (data for js. Will need one for each attribute plotted.)
 
@@ -97,7 +99,7 @@ def artistAttrToJson(artistInput):
 	# ScatterPlot data should be in form of [attr1, attr2]
 
 
-	return jsonify(attrData)
+	return jsonify(boxplot_df.to_json(orient="records"))
 
 
 

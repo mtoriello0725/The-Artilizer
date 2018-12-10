@@ -1,16 +1,39 @@
-function plotManager(artistName) {
-	/* 
-	This function will trigger all of the plotting functions and return
-	outputs to the proper html tags. Will need to make calls for:
+function boxplot(artistName) {
 
-	- Mean values of each attribute (in a melt dataframe.)
+	var boxplotURL = "/api/artist/boxplot/"+artistName;
 
-	- all album names (possibly album images) to visualize attributes by album
+	d3.json(boxplotURL).then(function(response) {
+		var boxplotData = response;
 
-	- attributes by album (album names above will be trigger for album charts)
+		// Data comes through perfectly. For now, use plotly for a boxplot! 
 
-	- top popular songs 
+		var trace1 = {
+			y: boxplotData.map(row => row.acousticness),
+			type: "box"
+		};
 
-	*/
-	console.log("Here is where to plot "+artistName)
+		var trace2 = {
+			y: boxplotData.map(row => row.danceability),
+			type: "box"
+		}
+
+		var data = [trace1, trace2];
+
+		var layout = {
+			title: "<b>Discography Attributes for "+artistName,
+			titlefont: {
+				size: 20
+			},
+			xaxis: {
+				title: "Attributes"
+			},
+			yaxis: {
+				title: "Scale"
+			}
+		};
+
+		console.log("got this far!");
+		Plotly.newplot("boxplot", data, layout);
+	})
+
 }

@@ -133,7 +133,7 @@ def artistCollection(artist):
 	df_trackFeatures["track_number"] = trackNumbers
 
 	# Drop any unnecessary columns:
-	
+
 
 	# Map df_trackFeatures key and mode:
 	df_trackFeatures["key"] = df_trackFeatures["key"].map(keyMap)
@@ -142,6 +142,8 @@ def artistCollection(artist):
 	# In artists database, append artist table:
 	try:
 		df_trackFeatures.to_sql(name=targetArtistName, con=conn, if_exists="replace")
+		conn.commit()
+		conn.close()
 		return "Success"
 	except:
 		return f"{targetArtistName} was NOT upload"
