@@ -88,6 +88,7 @@ def artistCollection(artist):
 
 	# Extract Artist ID
 	targetArtistID = targetArtist["id"]
+	targetArtistName = targetArtist["name"]
 	# Extract other parameters in search if needed (name,genres,images[0]["url"],popularity)
 
 	# Extract all albums by targetArtist
@@ -122,10 +123,17 @@ def artistCollection(artist):
 	for i in trackFeatures:
 		allTrackFeatures = allTrackFeatures + i
 
+	# append artist name to the list:
+	for song in allTrackFeatures:
+		song["artist_name"] = targetArtistName
+
 	# Create a DataFrame for TrackFeatures:
 	df_trackFeatures = pd.DataFrame(allTrackFeatures)
 	df_trackFeatures["name"] = trackNames
 	df_trackFeatures["track_number"] = trackNumbers
+
+	# Drop any unnecessary columns:
+	
 
 	# Map df_trackFeatures key and mode:
 	df_trackFeatures["key"] = df_trackFeatures["key"].map(keyMap)
@@ -133,11 +141,8 @@ def artistCollection(artist):
 
 	# In artists database, append artist table:
 	try:
-		df_trackFeatures.to_sql(name=artist, con=conn, if_exists="replace")
-		return f"Artist {artist} is currently uploaded in artists database"
+		df_trackFeatures.to_sql(name=targetArtistName, con=conn, if_exists="replace")
+		return "Success"
 	except:
-		return "Artist was NOT upload"
-
-
-
+		return f"{targetArtistName} was NOT upload"
 
