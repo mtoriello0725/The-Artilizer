@@ -12,4 +12,5 @@ function plotManager(artistName) {
 	- top popular songs 
 
 	*/
+	console.log("Here is where to plot "+artistName)
 }
