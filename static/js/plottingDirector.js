@@ -5,21 +5,51 @@ function boxplot(artistName) {
 	d3.json(boxplotURL).then(function(response) {
 		var boxplotData = response;
 
-		console.log(Object.keys(boxplotData).map(row => row.acousticness))
-
 		// Data comes through perfectly. For now, use plotly for a boxplot! 
 
-		var trace1 = {
-			y: Object.keys(boxplotData).map(row => row.acousticness),
-			type: "box"
+		var acousticness = {
+			y: boxplotData.map(row => row.acousticness),
+			type: "box",
+			name: "acousticness"
 		};
 
-		var trace2 = {
-			y: Object.keys(boxplotData).map(row => row.danceability),
-			type: "box"
-		}
+		var danceability = {
+			y: boxplotData.map(row => row.danceability),
+			type: "box",
+			name: "danceability"
+		};
 
-		var data = [trace1, trace2];
+		var energy = {
+			y: boxplotData.map(row => row.energy),
+			type: "box",
+			name: "energy"
+		};
+
+		var instrumentalness = {
+			y: boxplotData.map(row => row.instrumentalness),
+			type: "box",
+			name: "instrumentalness"
+		};
+
+		var liveness = {
+			y: boxplotData.map(row => row.liveness),
+			type: "box",
+			name: "liveness"
+		};
+
+		var speechiness = {
+			y: boxplotData.map(row => row.speechiness),
+			type: "box",
+			name: "speechiness"
+		};
+
+		var valence = {
+			y: boxplotData.map(row => row.valence),
+			type: "box",
+			name: "valence"
+		};	
+
+		var data = [acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence];
 
 		var layout = {
 			title: "<b>Discography Attributes for "+artistName,
@@ -34,7 +64,6 @@ function boxplot(artistName) {
 			}
 		};
 
-		console.log("got this far!");
 		Plotly.newPlot("boxplot", data, layout);
 	})
 
