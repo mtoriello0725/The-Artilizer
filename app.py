@@ -2,23 +2,19 @@ import os
 import sys
 ############################
 # Import functions from src
-from src.spotipyDataCollection import artistCollection
-# from config import *
+from src.spotipyMongoCollection import artistCollection
+from config import *
 ############################
 # Import spotipy
 # import spotipy
 # import spotipy.util as util
 # import spotipy.oauth2 as oauth
 ############################
-#Import SQLAlchemy
-import sqlalchemy
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
+#Import PyMongo
+import pymongo
 ############################
 # Import Flask
 from flask import Flask, jsonify, render_template, redirect, request
-from flask_sqlalchemy import SQLAlchemy
 ############################
 # Import data processing packages.
 import pandas as pd
@@ -51,7 +47,7 @@ def homePage():
 @app.route("/artist/display", methods=["GET", "POST"])
 def artistDisplay():
 
-	queriedArtist = request.args.get("artist_name")
+	artistCollected = request.args.get("artist_name")
 
 	return render_template("display.html")
 
@@ -68,9 +64,15 @@ def artistDataCollection(artistInput):
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
 	if request.method == "POST":
+		# Use the user input and run in the artistCollection function
 		queriedArtist = request.form["artist-input"]
-		artistCollection(queriedArtist)
-		return redirect(f"/artist/display?artist_name={queriedArtist}", code=302)
+		artistCollected = artistCollection(queriedArtist)
+
+		# If function succeeds, redirect to display page with artistCollected as the arg. 
+		if artistCollected != "Failed":
+			return redirect(f"/artist/display?artist_name={artistCollected}", code=302)
+		else:
+			return redirect(f"/#", code=302)
 
 	return render_template("home.html")
 
@@ -78,28 +80,34 @@ def collect():
 @app.route("/api/artist/boxplot/<artistInput>")
 def artistAttrToJson(artistInput):
 
-	## SQLALCHEMY CODE TO PULL EACH ATTRIBUTE FROM ARTIST'S TABLE
+	## PYMONGO CODE TO PULL EACH ATTRIBUTE FROM ARTIST'S TABLE
 
-	## Configure sqlalchemy:
-	DATABASE = "/Resources/artists.sqlite"
-	engine = create_engine(f"sqlite://{DATABASE}", echo=False)
-	conn = engine.connect()
+	## Configure mongodb:
+	conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
+	mongoClient = pymongo.MongoClient(conn)
+	db = mongoClient.spotify_artists
 
-	# Pull data from sqlite connection.
-	attr_list = "acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence"
-	boxplot_df = pd.read_sql_query(f"SELECT {attr_list} FROM {artistInput}", con=conn)
+	# assign artistCollection to the desired artist!
+	artistCollection = db[artistInput]
 
-	conn.close()
+	# assign dictionary of column names to pull from collection
+	attrDict = {
+		"_id": False,
+		"acousticness": True,
+		"danceability": True,
+		"energy": True,
+		"instrumentalness": True,
+		"liveness": True,
+		"speechiness": True,
+		"valence": True
+		}
 
-	# attrData = (data for js. Will need one for each attribute plotted.)
+	boxplotData = []
+	# iterate through collection and pull all records, but only specific columns
+	for i in artistCollection.find({}, attrDict):
+		boxplotData.append(i)
 
-	# Data should be in the form of 2 columns[attr, attr_count]
-		# ex: key_sig, mode
-
-	# ScatterPlot data should be in form of [attr1, attr2]
-
-
-	return jsonify(boxplot_df.to_json(orient="records"))
+	return jsonify(boxplotData)
 
 
 
