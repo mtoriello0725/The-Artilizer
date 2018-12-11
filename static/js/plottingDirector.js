@@ -5,15 +5,17 @@ function boxplot(artistName) {
 	d3.json(boxplotURL).then(function(response) {
 		var boxplotData = response;
 
+		console.log(Object.keys(boxplotData).map(row => row.acousticness))
+
 		// Data comes through perfectly. For now, use plotly for a boxplot! 
 
 		var trace1 = {
-			y: boxplotData.map(row => row.acousticness),
+			y: Object.keys(boxplotData).map(row => row.acousticness),
 			type: "box"
 		};
 
 		var trace2 = {
-			y: boxplotData.map(row => row.danceability),
+			y: Object.keys(boxplotData).map(row => row.danceability),
 			type: "box"
 		}
 
@@ -33,7 +35,7 @@ function boxplot(artistName) {
 		};
 
 		console.log("got this far!");
-		Plotly.newplot("boxplot", data, layout);
+		Plotly.newPlot("boxplot", data, layout);
 	})
 
 }
