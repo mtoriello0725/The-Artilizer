@@ -21,4 +21,6 @@ if (window.location.pathname == "/artist/display") {
 
 	// show the boxplot:
 	boxplot(searchArtist);
+	// show other bar charts:
+	keyBarchart(searchArtist);
 }
