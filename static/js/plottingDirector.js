@@ -65,6 +65,45 @@ function boxplot(artistName) {
 		};
 
 		Plotly.newPlot("boxplot", data, layout);
-	})
+	});
+
+}
+
+function keyBarchart(artistName) {
+
+	var keyCountURL = "/api/artist/keyBarchart/"+artistName;
+
+	d3.json(keyCountURL).then(function(response) {
+
+		keyCount = response;
+
+		console.log("keyBarchart Data");
+		console.log(keyCount);
+
+		var data = [{
+			x: Object.keys(keyCount),
+			y: Object.values(keyCount),
+			type: "bar"
+		}];
+
+		var layout = {
+			title: "Key Signature",
+			font: {
+				family: "Raleway, sans-serif"
+			},
+			showlegend: false,
+			xaxis: {
+				tickangle: -45
+			},
+			yaxis: {
+				zeroline: false,
+				gridwidth: 2
+			},
+			bargap: 0.05
+		};
+
+		Plotly.newPlot("keyplot", data, layout);
+
+	});
 
 }
