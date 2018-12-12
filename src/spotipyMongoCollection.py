@@ -27,7 +27,7 @@ If spotify token times out, should be seemless for user as this function will re
 ###################################################################
 """
 
-def artistCollection(artist): 
+def artistCollection(artist, db): 
 
 	# Create Scope List:
 	scope_list = ['user-read-currently-playing','user-read-playback-state',\
@@ -49,24 +49,24 @@ def artistCollection(artist):
 	sp = spotipy.Spotify(auth=token)
 
 	# # create keyMap and modeMap
-	# keyMap = {
-	#     0:"C",
-	#     1:"C#/Db",
-	#     2:"D",
-	#     3:"D#/Eb",
-	#     4:"E",
-	#     5:"F",
-	#     6:"F#/Gb",
-	#     7:"G",
-	#     8:"G#/Ab",
-	#     9:"A",
-	#     10:"A#/Bb",
-	#     11:"B",
-	# }
-	# modeMap = {
-	#     0:"minor",
-	#     1:"major",
-	# }
+	keyMap = {
+	    0:"C",
+	    1:"C#/Db",
+	    2:"D",
+	    3:"D#/Eb",
+	    4:"E",
+	    5:"F",
+	    6:"F#/Gb",
+	    7:"G",
+	    8:"G#/Ab",
+	    9:"A",
+	    10:"A#/Bb",
+	    11:"B",
+	}
+	modeMap = {
+	    0:"minor",
+	    1:"major",
+	}
 
 	# query for artist
 	searchResults = sp.search(
@@ -131,6 +131,11 @@ def artistCollection(artist):
 		allTrackFeatures[song]["track_number"] = trackNumbers[song]
 		allTrackFeatures[song]["album_name"] = albumNamesPerTrack[song]
 
+		# Append keymapping and modemapping
+		allTrackFeatures[song]["key"] = keyMap[allTrackFeatures[song]["key"]]
+		allTrackFeatures[song]["mode"] = keyMap[allTrackFeatures[song]["mode"]]
+
+
 	# Drop any unnecessary columns:
 
 
@@ -143,10 +148,10 @@ def artistCollection(artist):
 	# insert into mongoDB as individual collection:
 	# if collection exists? replace
 	try:
-		# create the mongodb connection:
-		conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
-		mongoClient = pymongo.MongoClient(conn)
-		db = mongoClient.spotify_artists
+		# # create the mongodb connection:
+		# conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
+		# mongoClient = pymongo.MongoClient(conn)
+		# db = mongoClient.spotify_artists
 
 		# Check to see if collection exists, if so replace. Otherwise create.
 		collectionList = db.list_collection_names()
@@ -161,5 +166,5 @@ def artistCollection(artist):
 		return targetArtistName
 
 	except:
-		return "Failed"
+		return "Failed at Mongo"
 
