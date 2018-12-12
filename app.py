@@ -31,10 +31,14 @@ app = Flask(__name__)
 		# do track numbers have a part in song attributes?
 		# is there a coorelation between danceability and popularity?
 
+## Configure mongodb:
+conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
+mongoClient = pymongo.MongoClient(conn)
+db = mongoClient.spotify_artists
+
 ################################################
 # Configure Routes:
 ################################################
-
 
 # home route will render standard home_page:
 @app.route("/")
@@ -51,22 +55,13 @@ def artistDisplay():
 
 	return render_template("display.html")
 
-""" Do not need this function if /collect route works:
-# sqlite artist collection route will lead to artist_collection.py
-@app.route("/api/artist/<artistInput>")
-def artistDataCollection(artistInput):
-
-	# run artist_collection function(s) with artist input
-
-	return jsonify(artistCollection(artistInput))
-"""
-
+# Collect Artist information based on search tag (artist-input)
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
 	if request.method == "POST":
 		# Use the user input and run in the artistCollection function
 		queriedArtist = request.form["artist-input"]
-		artistCollected = artistCollection(queriedArtist)
+		artistCollected = artistCollection(artist=queriedArtist, db=db)
 
 		# If function succeeds, redirect to display page with artistCollected as the arg. 
 		if artistCollected != "Failed":
@@ -79,13 +74,6 @@ def collect():
 # Folowing routes pull data from sqlite for each attribute collected
 @app.route("/api/artist/boxplot/<artistInput>")
 def artistAttrToJson(artistInput):
-
-	## PYMONGO CODE TO PULL EACH ATTRIBUTE FROM ARTIST'S TABLE
-
-	## Configure mongodb:
-	conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
-	mongoClient = pymongo.MongoClient(conn)
-	db = mongoClient.spotify_artists
 
 	# assign artistCollection to the desired artist!
 	artistCollection = db[artistInput]
@@ -110,7 +98,92 @@ def artistAttrToJson(artistInput):
 	return jsonify(boxplotData)
 
 
+@app.route("/api/artist/keyBarchart/<artistInput>")
+def artistKeyToJson(artistInput):
 
-# Run the application if file is called interactively.
+	# assign artistCollection to the desired artist!
+	artistCollection = db[artistInput]
+
+	attrDict = {
+		"_id": False,
+		"key": True
+	}
+
+	keyCount = {
+	    "C": 0,
+	    "C#/Db": 0,
+	    "D": 0,
+	    "D#/Eb": 0,
+	    "E": 0,
+	    "F": 0,
+	    "F#/Gb": 0,
+	    "G": 0,
+	    "G#/Ab": 0,
+	    "A": 0,
+	    "A#/Bb": 0,
+	    "B": 0,
+	}
+	# iterate through collection and pull all records, but only for above columns:
+	for i in artistCollection.find({}, attrDict):
+		keyCount[i["key"]]+=1
+
+	return jsonify(keyCount)
+	
+@app.route("/api/artist/tempoHistogram/<artistInput>")
+def artistTempoToJson(artistInput):
+
+	# assign artistCollection to the desired artist!
+	artistCollection = db[artistInput]
+
+	attrDict = {
+		"_id": False,
+		"tempo": True
+	}
+
+	histogramData = []
+	# iterate through collection and pull all records, but only for above columns:
+	for i in artistCollection.find({}, attrDict):
+		histogramData.append(i)
+
+	return jsonify(histogramData)
+	
+@app.route("/api/artist/modeBarchart/<artistInput>")
+def artistModeToJson(artistInput):
+
+	# assign artistCollection to the desired artist!
+	artistCollection = db[artistInput]
+
+	attrDict = {
+		"_id": False,
+		"mode": True
+	}
+
+	barchartData = []
+	# iterate through collection and pull all records, but only for above columns:
+	for i in artistCollection.find({}, attrDict):
+		barchartData.append(i)
+
+	return jsonify(barchartData)
+	
+@app.route("/api/artist/durationHistogram/<artistInput>")
+def artistDurationToJson(artistInput):
+
+	# assign artistCollection to the desired artist!
+	artistCollection = db[artistInput]
+
+	attrDict = {
+		"_id": False,
+		"duration_ms": True
+	}
+# Run the applicatio
+	histogramData = []
+	# iterate through collection and pull all records, but only for above columns:
+	for i in artistCollection.find({}, attrDict):
+		histogramData.append(i)
+
+	return jsonify(histogramData)
+
+
+# if file is called interactively.
 if __name__ == "__main__":
 	app.run()
