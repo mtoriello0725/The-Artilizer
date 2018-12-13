@@ -4,48 +4,48 @@
 <html lang="en">
 
 <head>
-  <title>The Artilyzer</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    <title>The Artilyzer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">
 <!--   load static files -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body class="body">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="topnav">
-        <a class="active" href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <div class="search-container">
-          <form method="POST" action="/collect">
-            <input type="text" placeholder="Search.." id="artist-input-nav" name="artist-input">
-            <button id="submit_nav" class="btn btn-default" type="submit">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          </form>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="topnav">
+                <a class="active" href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <div class="search-container">
+                    <form method="POST" action="/collect">
+                        <input type="text" placeholder="Search.." id="artist-input-nav" name="artist-input">
+                        <button id="submit_nav" class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </nav>
+    </nav>
 
-  <br><hr>
+    <br><hr>
 
-  <div id="content" class="container-fluid">{% block content %}{% endblock %}</div>
+    <div id="content" class="container-fluid">{% block content %}{% endblock %}</div>
 
-  <hr><br>
+    <hr><br>
 
-  <footer>
-    <div>
-      <p><a href="#" target="blank">Contact</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Github</a></p>
-    </div>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/plottingDirector.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <footer>
+        <div>
+            <p><a href="#" target="blank">Contact</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Github</a></p>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plottingDirector.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 
 </html>
