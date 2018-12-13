@@ -1,36 +1,98 @@
-
-
-<!-- Use extends header.html for home page -->
-
 {% extends "header_footer.html" %}
 
 {% block content %}
-  
-    <div class="row">
-        <div class="jumbotron jumbotron-fluid">
-            <h1 id="artist-display" class="display-4"></h1>
-            <p>This is a program to generate common attributes of your favorite artist.</p>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div id="boxplot"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="topnav">
+                <a class="active" href="/">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <div class="search-container">
+                    <form method="POST" action="/collect">
+                        <input type="text" placeholder="Search.." id="artist-input-nav" name="artist-input">
+                        <button id="submit_nav" class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-6">
-            <div class="col-sm-6">
-                <div id="keyplot"></div>
+    </nav>
+
+    <br><hr>
+
+    <div id="content" class="container-fluid">
+
+        <div class="row">
+            <!-- Column to showcase artist name and minor description -->
+            <div class="col-lg-6">
+                <div class="jumbotron jumbotron-fluid">
+                    <h1 id="artist-display" class="display-4"></h1>
+                    <p>This is a program to generate common attributes of your favorite artist.</p>
+                </div>
             </div>
-            <div class="col-sm-6">
-                <div id="tempoplot"></div>
+            <!-- Column to display artists top track -->
+            <div class="col-lg-2">
+                <h2>Top Tracks</h2>
+                <!-- For now list some tracks, but eventually append this tag with d3 for 5 tracks -->
+                <ul class="list-group top-tracks">
+                    <li class="list-group-item">Bohemian Rhapsody</li>
+                    <li class="list-group-item">Another One bites the Dust</li>
+                    <li class="list-group-item">We Will Rock You</li>
+                    <li class="list-group-item">We Are the Champions</li>
+                    <li class="list-group-item">Under Pressure</li>
+                </ul>
             </div>
-            <div class="col-sm-6">
-                <div id="modeplot"></div>
+            <!-- Column to display artists top albums -->
+            <div class="col-lg-4">
+                <h2>Top Albums</h2>
+                <!-- For now, display 4 thumbnails, but eventually append this tag with d3 for at most 8 albums: -->
+                <div class="row thumbnail-section">
+                    <div class="col-lg-3">
+                        <a href="#" class="thumbnail">
+                            <img src="https://i.scdn.co/image/f3a95abaa071c1585eeb1e6d1a1a3f1b97460c14">
+                        </a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="#" class="thumbnail">
+                            <img src="https://i.scdn.co/image/f3a95abaa071c1585eeb1e6d1a1a3f1b97460c14">
+                        </a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="#" class="thumbnail">
+                            <img src="https://i.scdn.co/image/f3a95abaa071c1585eeb1e6d1a1a3f1b97460c14">
+                        </a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="#" class="thumbnail">
+                            <img src="https://i.scdn.co/image/f3a95abaa071c1585eeb1e6d1a1a3f1b97460c14">
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-6">
-                <div id="durationplot"></div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="boxplot"></div>
             </div>
-        </div>   
+            <div class="col-lg-6">
+                <div class="col-sm-6">
+                    <div id="keyplot"></div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="tempoplot"></div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="modeplot"></div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="durationplot"></div>
+                </div>
+            </div>   
+        </div>
     </div>
 
 {% endblock %}
