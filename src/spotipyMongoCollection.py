@@ -64,8 +64,8 @@ def artistCollection(artist, db):
 	    11:"B",
 	}
 	modeMap = {
-	    0:"minor",
-	    1:"major",
+	    0:"Minor",
+	    1:"Major",
 	}
 
 	# query for artist
@@ -133,7 +133,7 @@ def artistCollection(artist, db):
 
 		# Append keymapping and modemapping
 		allTrackFeatures[song]["key"] = keyMap[allTrackFeatures[song]["key"]]
-		allTrackFeatures[song]["mode"] = keyMap[allTrackFeatures[song]["mode"]]
+		allTrackFeatures[song]["mode"] = modeMap[allTrackFeatures[song]["mode"]]
 
 
 	# Drop any unnecessary columns:
