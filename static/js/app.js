@@ -15,12 +15,21 @@ outputs to the proper html tags on the display page. Will need to make calls for
 // Use the window parameters to tell javascript what the queried artist was.
 if (window.location.pathname == "/artist/display") {
 
+	// extract the current href location
 	var url = new URL(window.location.href);
+	// aquire artist name from href parameters, and remove the underscore
 	searchArtist = url.searchParams.get("artist_name");
-	console.log(searchArtist);
+	displaySearchArtist = searchArtist.replace(/_/g, " ");
+
+	// select the display tag and output the artist name
+	d3.select("#artist-display").text(displaySearchArtist+" Display Page!");
 
 	// show the boxplot:
 	boxplot(searchArtist);
+	
 	// show other bar charts:
 	keyBarchart(searchArtist);
+	tempoHistogram(searchArtist);
+	modeBarchart(searchArtist);
+	durationHistogram(searchArtist);
 }
