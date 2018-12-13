@@ -6,21 +6,21 @@
 
 {% block content %}
   
-  <div class="row">
-    <div class="jumbotron jumbotron-fluid">
-      <h1 class="display-4">Welcome to the Artilyzer!</h1>
-      <p>This is a program to generate common attributes of your favorite artist.</p>
+    <div class="row">
+        <div class="jumbotron jumbotron-fluid">
+            <h1 class="display-4">Welcome to the Artilyzer!</h1>
+            <p>This is a program to generate common attributes of your favorite artist.</p>
+        </div>
     </div>
-  </div>
 
-  <form method="POST" action="/collect">
-    <div class="input-group input-group-lg">
-      <input type="text" placeholder="Search for favorite artist..." id="artist-input-home" name="artist-input">
-      <button id="submit_home" class="btn btn-default" type="submit">
-        <span class="glyphicon glyphicon-search"></span>
-      </button>
-    </div>
-  </form>
+    <form method="POST" action="/collect">
+        <div class="input-group input-group-lg">
+            <input type="text" placeholder="Search for favorite artist..." id="artist-input-home" name="artist-input">
+            <button id="submit_home" class="btn btn-default" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </div>
+    </form>
 
 
 {% endblock %}
