@@ -1,5 +1,7 @@
 function boxplot(artistName) {
 
+	var displayName = artistName.replace(/_/g, " ");
+
 	var boxplotURL = "/api/artist/boxplot/"+artistName;
 
 	d3.json(boxplotURL).then(function(response) {
@@ -52,7 +54,7 @@ function boxplot(artistName) {
 		var data = [acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence];
 
 		var layout = {
-			title: "<b>Discography Attributes for "+artistName,
+			title: "<b>Discography Attributes for "+displayName,
 			titlefont: {
 				size: 20
 			},
@@ -61,7 +63,9 @@ function boxplot(artistName) {
 			},
 			yaxis: {
 				title: "Scale"
-			}
+			},
+			width: 700,
+			height: 950
 		};
 
 		Plotly.newPlot("boxplot", data, layout);
@@ -107,3 +111,86 @@ function keyBarchart(artistName) {
 	});
 
 }
+
+function tempoHistogram(artistName) {
+
+	var tempoURL = "/api/artist/tempoHistogram/"+artistName;
+
+	d3.json(tempoURL).then(function(response) {
+
+		tempoList = response;
+
+		data = [{
+			x: tempoList,
+			type: "histogram",
+		}];
+
+		layout = {
+			title: "Tempo Histogram",
+			bargap: 0.05,
+		}
+
+		Plotly.newPlot("tempoplot", data, layout);
+	})
+} 
+
+function modeBarchart(artistName) {
+
+	var modeCountURL = "/api/artist/modeBarchart/"+artistName;
+
+	d3.json(modeCountURL).then(function(response) {
+
+		modeCount = response;
+
+		console.log("modeBarchart Data");
+		console.log(modeCount);
+
+		var data = [{
+			x: Object.keys(modeCount),
+			y: Object.values(modeCount),
+			type: "bar"
+		}];
+
+		var layout = {
+			title: "Mode",
+			font: {
+				family: "Raleway, sans-serif"
+			},
+			showlegend: false,
+			xaxis: {
+				tickangle: -45
+			},
+			yaxis: {
+				zeroline: false,
+				gridwidth: 2
+			},
+			bargap: 0.05
+		};
+
+		Plotly.newPlot("modeplot", data, layout);
+
+	});
+
+}
+
+function durationHistogram(artistName) {
+
+	var durationURL = "/api/artist/durationHistogram/"+artistName;
+
+	d3.json(durationURL).then(function(response) {
+
+		durationList = response;
+
+		data = [{
+			x: durationList,
+			type: "histogram",
+		}];
+
+		layout = {
+			title: "Duration Histogram in Minutes",
+			bargap: 0.05
+		}
+
+		Plotly.newPlot("durationplot", data, layout);
+	})
+} 
