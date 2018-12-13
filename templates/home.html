@@ -5,22 +5,46 @@
 {% extends "header_footer.html" %}
 
 {% block content %}
-  
-    <div class="row">
-        <div class="jumbotron jumbotron-fluid">
-            <h1 class="display-4">Welcome to the Artilyzer!</h1>
-            <p>This is a program to generate common attributes of your favorite artist.</p>
-        </div>
-    </div>
 
-    <form method="POST" action="/collect">
-        <div class="input-group input-group-lg">
-            <input type="text" placeholder="Search for favorite artist..." id="artist-input-home" name="artist-input">
-            <button id="submit_home" class="btn btn-default" type="submit">
-                <span class="glyphicon glyphicon-search"></span>
-            </button>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="topnav">
+                <a class="active" href="/">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <div class="search-container">
+                    <form method="POST" action="/collect">
+                        <input type="text" placeholder="Search.." id="artist-input-nav" name="artist-input">
+                        <button id="submit_nav" class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </nav>
+
+    <br><hr>
+
+    <div id="content" class="container-fluid">
+
+        <div class="row">
+            <div class="jumbotron jumbotron-fluid">
+                <h1 class="display-4">Welcome to the Artilyzer!</h1>
+                <p>This is a program to generate common attributes of your favorite artist.</p>
+            </div>
+        </div>
+
+        <form method="POST" action="/collect">
+            <div class="input-group input-group-lg">
+                <input type="text" placeholder="Search for favorite artist..." id="artist-input-home" name="artist-input">
+                <button id="submit_home" class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </div>
+        </form>
+
+    </div>
 
 
 {% endblock %}
