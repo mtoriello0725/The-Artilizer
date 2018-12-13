@@ -40,11 +40,23 @@ db = mongoClient.spotify_artists
 # Configure Routes:
 ################################################
 
-# home route will render standard home_page:
+# home route will render standard home page:
 @app.route("/")
 def homePage():
 
 	return render_template("home.html")
+
+# about route will render description about the app, and why it was created
+@app.route("/about")
+def aboutPage():
+
+	return render_template("about.html")
+
+# Contact page that has a link to the repo, as well as a card with my name, number, email, linkedin, github, and website url 
+@app.route("/contact")
+def contactPage():
+
+	return render_template("contact.html")
 
 
 # display route will be seen as artist followed by actual artist name:
