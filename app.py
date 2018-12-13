@@ -143,7 +143,7 @@ def artistTempoToJson(artistInput):
 	histogramData = []
 	# iterate through collection and pull all records, but only for above columns:
 	for i in artistCollection.find({}, attrDict):
-		histogramData.append(i)
+		histogramData.append(i["tempo"])
 
 	return jsonify(histogramData)
 	
@@ -158,12 +158,16 @@ def artistModeToJson(artistInput):
 		"mode": True
 	}
 
-	barchartData = []
+	modeCount = {
+	    "Minor": 0,
+	    "Major": 0,
+	}
+
 	# iterate through collection and pull all records, but only for above columns:
 	for i in artistCollection.find({}, attrDict):
-		barchartData.append(i)
+		modeCount[i["mode"]]+=1
 
-	return jsonify(barchartData)
+	return jsonify(modeCount)
 	
 @app.route("/api/artist/durationHistogram/<artistInput>")
 def artistDurationToJson(artistInput):
@@ -179,7 +183,9 @@ def artistDurationToJson(artistInput):
 	histogramData = []
 	# iterate through collection and pull all records, but only for above columns:
 	for i in artistCollection.find({}, attrDict):
-		histogramData.append(i)
+		histogramData.append(i["duration_ms"])
+
+	histogramData = [i/60000 for i in histogramData]
 
 	return jsonify(histogramData)
 
