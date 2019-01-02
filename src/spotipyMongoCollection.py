@@ -35,6 +35,7 @@ def artistCollection(artist, db):
 	# Throw all permissions from the list into a string for token function:
 	scope = ' '.join(scope_list)
 
+
 	# Create Spotipy token
 	token = util.prompt_for_user_token(
 		username=os.getenv("usernameSP"),
@@ -53,8 +54,8 @@ def artistCollection(artist, db):
 	    client_secret=client_secret,
 	    redirect_uri=redirect_uri
 	    )
-	"""
 
+	"""
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
 
