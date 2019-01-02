@@ -5,10 +5,7 @@ import spotipy
 import spotipy.util as util
 import spotipy.oauth2 as oauth
 
-from config import *
-
-import numpy as np
-import pandas as pd
+# from config import *
 
 import pymongo
 """
@@ -36,14 +33,24 @@ def artistCollection(artist, db):
 	# Throw all permissions from the list into a string for token function:
 	scope = ' '.join(scope_list)
 
-	# Create Spotipy token
-	token = util.prompt_for_user_token(
-		username=username,
-		scope=scope,
-	    client_id=client_id,
-	    client_secret=client_secret,
-	    redirect_uri=redirect_uri
-	    )
+	try:
+		# Create Spotipy token
+		token = util.prompt_for_user_token(
+			username=os.getenv("usernameSP"),
+			scope=scope,
+		    client_id=os.getenv("client_id"),
+		    client_secret=os.getenv("client_secret"),
+		    redirect_uri=os.getenv("redirect_uri")
+		    )
+	except:
+		print("env variables failed")
+		# token = util.prompt_for_user_token(
+		# 	username=username,
+		# 	scope=scope,
+		#     client_id=client_id,
+		#     client_secret=client_secret,
+		#     redirect_uri=redirect_uri
+		#     )
 
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
@@ -91,10 +98,13 @@ def artistCollection(artist, db):
 	# Extract all albums by targetArtist
 	albums = sp.artist_albums(artist_id=targetArtistID, album_type="album")
 
-	# Collect ids, names, and total tracks
+	# Collect ids, names, and total tracks.
+	# Added Artwork & Release date
 	albumIDs = [album["id"] for album in albums["items"]]
 	albumNames = [album["name"] for album in albums["items"]]
 	albumTotalTracks = [album["total_tracks"] for album in albums["items"]]
+	albumArtwork = [album["images"][0]["url"] for album in albums["items"]]
+	albumReleaseDate = [album["release_date"] for album in albums["items"]]
 
 	# Collect all tracks from each album. Tracks will be stored in lists per album
 	# ex. 5 albums means tracksByAlbum will contain 5 lists.
@@ -106,7 +116,7 @@ def artistCollection(artist, db):
 	trackNumbers = []
 	albumNamesPerTrack = []
 
-	# APpend albumNames for each track:
+	# Append albumNames for each track:
 	for i in range(0,len(tracksByAlbum)):
 		for track in tracksByAlbum[i]["items"]:
 			# append empty track lists. 
@@ -136,12 +146,15 @@ def artistCollection(artist, db):
 		allTrackFeatures[song]["mode"] = modeMap[allTrackFeatures[song]["mode"]]
 
 
-	# Drop any unnecessary columns:
+	# Add a mongodb record for top tracks
+	topTracks = sp.artist_top_tracks(targetArtistID)
+	topTrackNames = [track["name"] for track in topTracks["tracks"]]
+	# Top Tracks list to Json format
+	topTracksRecord = {"artist":targetArtistName, "tracks":topTrackNames[0:5]}
 
+	# Add a mongoDB record for 8 recent album artworks
+	alumArtworksRecord = {"artist":targetArtistName, "artwork":albumArtwork[0:8]}
 
-	# Map df_trackFeatures key and mode: (Will modify when needed.)
-	# df_trackFeatures["key"] = df_trackFeatures["key"].map(keyMap)
-	# df_trackFeatures["mode"] = df_trackFeatures["mode"].map(modeMap)
 
 
 	# In artist_collection, append new artist to the table:
@@ -162,6 +175,18 @@ def artistCollection(artist, db):
 		# upload new collection	
 		artistCollection = db[targetArtistName]
 		uploadAttr = artistCollection.insert_many(allTrackFeatures)
+
+		# Upload Top Tracks
+		topTracksCollection = db["topTracks"]
+		# Delete record if it already exists
+		delTopTracks = topTracksCollection.delete_many({"artist":targetArtistName})
+		uploadTopTracks = topTracksCollection.insert_one(topTracksRecord)
+
+		# Upload Album Images
+		albumArtworkCollection = db["albumArtwork"]
+		# Delete record if it already exists
+		delArtwork = albumArtworkCollection.delete_many({"artist":targetArtistName})
+		uploadAlbumArtwork = albumArtworkCollection.insert_one(alumArtworksRecord)
 
 		return targetArtistName
 

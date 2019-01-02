@@ -3,7 +3,7 @@ import sys
 ############################
 # Import functions from src
 from src.spotipyMongoCollection import artistCollection
-from config import *
+# from config import *
 ############################
 # Import spotipy
 # import spotipy
@@ -17,8 +17,6 @@ import pymongo
 from flask import Flask, jsonify, render_template, redirect, request
 ############################
 # Import data processing packages.
-import pandas as pd
-import numpy as np
 
 ################################################
 # Flask Application:
@@ -32,6 +30,8 @@ app = Flask(__name__)
 		# is there a coorelation between danceability and popularity?
 
 ## Configure mongodb:
+dbuser = os.getenv("dbuser")
+dbpassword = os.getenv("dbpassword")
 conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
 mongoClient = pymongo.MongoClient(conn)
 db = mongoClient.spotify_artists
@@ -83,7 +83,23 @@ def collect():
 
 	return render_template("home.html")
 
-# Folowing routes pull data from sqlite for each attribute collected
+# Folowing routes pull data from pymongo for each attribute collected
+@app.route("/api/artist/topTracks/<artistInput>")
+def artistTopTracks(artistInput):
+
+	topTracksCollection = db["topTracks"]
+
+	artistQuery = { "artist":artistInput }
+
+	filterDict = {
+		"_id":False
+	}
+
+	topTracksData = topTracksCollection.find_one(artistQuery,filterDict)
+
+	return jsonify(topTracksData)
+
+
 @app.route("/api/artist/boxplot/<artistInput>")
 def artistAttrToJson(artistInput):
 

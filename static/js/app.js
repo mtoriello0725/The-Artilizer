@@ -24,6 +24,10 @@ if (window.location.pathname == "/artist/display") {
 	// select the display tag and output the artist name
 	d3.select("#artist-display").text(displaySearchArtist+" Display Page!");
 
+	// Display topTracks and Artwork
+	topTracks(searchArtist);
+	
+
 	// show the boxplot:
 	boxplot(searchArtist);
 	

@@ -1,3 +1,24 @@
+function topTracks(artistName) {
+
+	var displayName = artistName.replace(/_/g, " ");
+
+	var topTracksURL = "/api/artist/topTracks/"+artistName;
+
+	d3.json(topTracksURL).then(function(response) {
+		var artistTracks = response["tracks"];
+
+		var ul = d3.select(".top-tracks");
+
+		ul.selectAll("li")
+			.data(artistTracks)
+			.enter()
+			.append("li")
+			.attr("class", "list-group-item")
+			.html(String);
+
+	})
+}
+
 function boxplot(artistName) {
 
 	var displayName = artistName.replace(/_/g, " ");
@@ -81,9 +102,6 @@ function keyBarchart(artistName) {
 
 		keyCount = response;
 
-		console.log("keyBarchart Data");
-		console.log(keyCount);
-
 		var data = [{
 			x: Object.keys(keyCount),
 			y: Object.values(keyCount),
@@ -141,9 +159,6 @@ function modeBarchart(artistName) {
 	d3.json(modeCountURL).then(function(response) {
 
 		modeCount = response;
-
-		console.log("modeBarchart Data");
-		console.log(modeCount);
 
 		var data = [{
 			x: Object.keys(modeCount),
