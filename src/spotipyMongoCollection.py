@@ -35,23 +35,25 @@ def artistCollection(artist, db):
 	# Throw all permissions from the list into a string for token function:
 	scope = ' '.join(scope_list)
 
-	try:
-		# Create Spotipy token
-		token = util.prompt_for_user_token(
-			username=os.getenv("usernameSP"),
-			scope=scope,
-		    client_id=os.getenv("client_id"),
-		    client_secret=os.getenv("client_secret"),
-		    redirect_uri=os.getenv("redirect_uri")
-		    )
-	except:
-		token = util.prompt_for_user_token(
-			username=username,
-			scope=scope,
-		    client_id=client_id,
-		    client_secret=client_secret,
-		    redirect_uri=redirect_uri
-		    )
+	# Create Spotipy token
+	token = util.prompt_for_user_token(
+		username=os.getenv("usernameSP"),
+		scope=scope,
+	    client_id=os.getenv("client_id"),
+	    client_secret=os.getenv("client_secret"),
+	    redirect_uri=os.getenv("redirect_uri")
+	    )
+	
+	"""
+	# When running on local machine	
+	token = util.prompt_for_user_token(
+		username=username,
+		scope=scope,
+	    client_id=client_id,
+	    client_secret=client_secret,
+	    redirect_uri=redirect_uri
+	    )
+	"""
 
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
