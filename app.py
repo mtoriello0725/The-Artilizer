@@ -30,9 +30,10 @@ app = Flask(__name__)
 		# is there a coorelation between danceability and popularity?
 
 ## Configure mongodb:
-dbuser = os.getenv("dbuser")
-dbpassword = os.getenv("dbpassword")
-conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
+# dbuser = os.getenv("dbuser")
+# dbpassword = os.getenv("dbpassword")
+# conn = f"mongodb://{dbuser}:{dbpassword}@ds035014.mlab.com:35014/spotify_artists"
+conn = os.getenv("MONGODB_URI")
 mongoClient = pymongo.MongoClient(conn)
 db = mongoClient.spotify_artists
 
