@@ -26,6 +26,8 @@ If spotify token times out, should be seemless for user as this function will re
 
 def artistCollection(artist, db): 
 
+	global token
+
 	# Create Scope List:
 	scope_list = ['user-read-currently-playing','user-read-playback-state',\
 	              'user-follow-read','user-library-read','user-top-read','user-read-recently-played']
@@ -43,14 +45,13 @@ def artistCollection(artist, db):
 		    redirect_uri=os.getenv("redirect_uri")
 		    )
 	except:
-		print("env variables failed")
-		# token = util.prompt_for_user_token(
-		# 	username=username,
-		# 	scope=scope,
-		#     client_id=client_id,
-		#     client_secret=client_secret,
-		#     redirect_uri=redirect_uri
-		#     )
+		token = util.prompt_for_user_token(
+			username=username,
+			scope=scope,
+		    client_id=client_id,
+		    client_secret=client_secret,
+		    redirect_uri=redirect_uri
+		    )
 
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
