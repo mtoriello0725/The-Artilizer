@@ -19,6 +19,27 @@ function topTracks(artistName) {
 	})
 }
 
+function albumArtwork(artistName) {
+
+	var displayName = artistName.replace(/_/g, " ");
+
+	var albumArtworkURL = "/api/artist/albumArtwork/"+artistName;
+
+	d3.json(albumArtworkURL).then(function(response) {
+		var artwork  = response["artwork"];
+
+		var album_list = d3.select(".thumbnail-section");
+
+		album_list.selectAll("img")
+			.data(artwork, function(d) { return d; })
+			.enter()
+			.append("img")
+			.attr("class", "col-lg-3 thumbnail")
+			.attr("src", function(d) { return d; });
+
+	})
+}
+
 function boxplot(artistName) {
 
 	var displayName = artistName.replace(/_/g, " ");
