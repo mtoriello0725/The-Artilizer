@@ -73,3 +73,8 @@ body {
   }
 }
 
+.thumbnail {
+  max-width: 150px;
+  height: auto;
+  width: auto\9;
+}
