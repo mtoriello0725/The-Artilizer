@@ -104,6 +104,21 @@ def artistTopTracks(artistInput):
 
 	return jsonify(topTracksData)
 
+@app.route("/api/artist/albumArtwork/<artistInput>")
+def artistAlbumArtwork(artistInput):
+
+	albumArtworkCollection = db["albumArtwork"]
+
+	artistQuery = { "artist":artistInput }
+
+	filterDict = {
+		"_id":False
+	}
+
+	albumArtworkData = albumArtworkCollection.find_one(artistQuery, filterDict)
+
+	return jsonify(albumArtworkData)
+
 
 @app.route("/api/artist/boxplot/<artistInput>")
 def artistAttrToJson(artistInput):
