@@ -5,9 +5,13 @@ import spotipy
 import spotipy.util as util
 import spotipy.oauth2 as oauth
 
-# from config import *
-
 import pymongo
+
+# import environment variables. On local machine, stored in python file config
+try: 
+	from config import *
+except:
+	pass
 """
 ###################################################################
 
@@ -29,33 +33,39 @@ def artistCollection(artist, db):
 	global token
 
 	# Create Scope List:
-	scope_list = ['user-read-currently-playing','user-read-playback-state',\
-	              'user-follow-read','user-library-read','user-top-read','user-read-recently-played']
+	scope_list = [
+		'user-read-currently-playing',
+		'user-read-playback-state',
+		'user-follow-read',
+		'user-library-read',
+		'user-top-read',
+		'user-read-recently-played'
+		]
 
 	# Throw all permissions from the list into a string for token function:
 	scope = ' '.join(scope_list)
 
 
 	# Create Spotipy token
-	token = util.prompt_for_user_token(
-		username=os.getenv("usernameSP"),
-		scope=scope,
-	    client_id=os.getenv("client_id"),
-	    client_secret=os.getenv("client_secret"),
-	    redirect_uri=os.getenv("redirect_uri")
-	    )
-	
-	"""
-	# When running on local machine	
-	token = util.prompt_for_user_token(
-		username=username,
-		scope=scope,
-	    client_id=client_id,
-	    client_secret=client_secret,
-	    redirect_uri=redirect_uri
-	    )
+	# If on local machine, getenv should be None
 
-	"""
+	if os.getenv("usernameSP") != None:
+		token = util.prompt_for_user_token(
+			username=os.getenv("usernameSP"),
+			scope=scope,
+	    	client_id=os.getenv("client_id"),
+	    	client_secret=os.getenv("client_secret"),
+	    	redirect_uri=os.getenv("redirect_uri")
+	    	)
+	else:
+		token = util.prompt_for_user_token(
+			username=username,
+			scope=scope,
+		    client_id=client_id,
+		    client_secret=client_secret,
+		    redirect_uri=redirect_uri
+		    )
+
 	# Authorize spotipy object as sp
 	sp = spotipy.Spotify(auth=token)
 
@@ -153,11 +163,13 @@ def artistCollection(artist, db):
 	# Add a mongodb record for top tracks
 	topTracks = sp.artist_top_tracks(targetArtistID)
 	topTrackNames = [track["name"] for track in topTracks["tracks"]]
+
 	# Top Tracks list to Json format
 	topTracksRecord = {"artist":targetArtistName, "tracks":topTrackNames[0:5]}
 
+
 	# Add a mongoDB record for 8 recent album artworks
-	alumArtworksRecord = {"artist":targetArtistName, "artwork":albumArtwork[0:8]}
+	albumArtworksRecord = {"artist":targetArtistName, "artwork":albumArtwork[0:8]}
 
 
 
@@ -190,7 +202,7 @@ def artistCollection(artist, db):
 		albumArtworkCollection = db["albumArtwork"]
 		# Delete record if it already exists
 		delArtwork = albumArtworkCollection.delete_many({"artist":targetArtistName})
-		uploadAlbumArtwork = albumArtworkCollection.insert_one(alumArtworksRecord)
+		uploadAlbumArtwork = albumArtworkCollection.insert_one(albumArtworksRecord)
 
 		return targetArtistName
 
