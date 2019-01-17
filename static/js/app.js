@@ -26,7 +26,7 @@ if (window.location.pathname == "/artist/display") {
 
 	// Display topTracks and Artwork
 	topTracks(searchArtist);
-	
+	albumArtwork(searchArtist);	
 
 	// show the boxplot:
 	boxplot(searchArtist);
