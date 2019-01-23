@@ -70,7 +70,7 @@ def artistDisplay():
 
 	artistCollected = request.args.get("artist_name")
 
-	return render_template("display.html")
+	return render_template("display.html", artistCollected=artistCollected)
 
 # Collect Artist information based on search tag (artist-input)
 @app.route("/collect", methods=["GET", "POST"])
@@ -240,4 +240,4 @@ def artistDurationToJson(artistInput):
 
 # if file is called interactively.
 if __name__ == "__main__":
-	app.run()
+	app.run(debug=False)

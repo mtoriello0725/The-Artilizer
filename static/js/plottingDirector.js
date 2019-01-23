@@ -30,13 +30,14 @@ function albumArtwork(artistName) {
 
 		var album_list = d3.select(".thumbnail-section");
 
-		album_list.selectAll("img")
+		album_list.selectAll("a")
 			.data(artwork, function(d) { return d; })
 			.enter()
-			.append("img")
+			.append("a")
 			.attr("class", "col-lg-3 thumbnail")
+			.attr("href", function(d) { return d; })
+			.append("img")
 			.attr("src", function(d) { return d; });
-
 	})
 }
 
