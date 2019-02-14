@@ -70,20 +70,20 @@ def artistCollection(artist, db):
 	sp = spotipy.Spotify(auth=token)
 
 	# # create keyMap and modeMap
-	keyMap = {
-	    0:"C",
-	    1:"C#/Db",
-	    2:"D",
-	    3:"D#/Eb",
-	    4:"E",
-	    5:"F",
-	    6:"F#/Gb",
-	    7:"G",
-	    8:"G#/Ab",
-	    9:"A",
-	    10:"A#/Bb",
-	    11:"B",
-	}
+	# keyMap = {
+	#     0:"C",
+	#     1:"C#/Db",
+	#     2:"D",
+	#     3:"D#/Eb",
+	#     4:"E",
+	#     5:"F",
+	#     6:"F#/Gb",
+	#     7:"G",
+	#     8:"G#/Ab",
+	#     9:"A",
+	#     10:"A#/Bb",
+	#     11:"B",
+	# }
 	modeMap = {
 	    0:"Minor",
 	    1:"Major",
@@ -156,7 +156,7 @@ def artistCollection(artist, db):
 		allTrackFeatures[song]["album_name"] = albumNamesPerTrack[song]
 
 		# Append keymapping and modemapping
-		allTrackFeatures[song]["key"] = keyMap[allTrackFeatures[song]["key"]]
+		# allTrackFeatures[song]["key"] = keyMap[allTrackFeatures[song]["key"]]
 		allTrackFeatures[song]["mode"] = modeMap[allTrackFeatures[song]["mode"]]
 
 
