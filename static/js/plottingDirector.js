@@ -51,7 +51,6 @@ function boxplot(artistName) {
 		var boxplotData = response;
 
 		// Data comes through perfectly. For now, use plotly for a boxplot! 
-
 		var acousticness = {
 			y: boxplotData.map(row => row.acousticness),
 			type: "box",
@@ -112,6 +111,60 @@ function boxplot(artistName) {
 		};
 
 		Plotly.newPlot("boxplot", data, layout);
+
+		// // Now using Highcharts:
+
+		// var acousticnessData = Object.values(boxplotData.map(row => row.acousticness)).sort(function(a, b){return a - b});
+
+		// Highcharts.chart("boxplot", {
+
+		// 	chart: {
+		// 		type: "boxplot"
+		// 	},
+
+		// 	title: {
+		// 		text: "Highchart Boxplot"
+		// 	},
+
+		// 	legend: {
+		// 		enabled: false
+		// 	},
+
+		// 	xAxis: {
+		// 		categories: ['Acousticness', '2'],
+		// 		title: {
+		// 			text: "Musical Attribute"
+		// 		}
+		// 	},
+
+		// 	yAxis: {
+		// 		title: {
+		// 			text: "Attribute Level"
+		// 		}
+		// 	},
+
+		// 	series: [{
+		// 		name: "Attribute",
+		// 		data: [
+		// 			acousticnessData,
+  //           		[.5, .8, .6, .2, .3],
+		// 			// Object.values(boxplotData.map(row => row.acousticness)),
+		// 			// Object.values(boxplotData.map(row => row.danceability)),
+		// 			// Object.values(boxplotData.map(row => row.energy)),
+		// 			// Object.values(boxplotData.map(row => row.instrumentalness)),
+		// 			// Object.values(boxplotData.map(row => row.liveness)),
+		// 			// Object.values(boxplotData.map(row => row.speechiness)),
+		// 			// Object.values(boxplotData.map(row => row.valence)),
+		// 		],
+		// 		tooltip: {
+		// 			headerFormat: "<em>Attribute {point.key}</em><br/>"
+		// 		}
+
+		// 	}]
+
+		// })
+
+
 	});
 
 }
@@ -124,13 +177,26 @@ function keyBarchart(artistName) {
 
 		keyCount = response;
 
-		var data = [{
-			x: Object.keys(keyCount),
-			y: Object.values(keyCount),
+		console.log(keyCount);
+
+		var trace1 = {
+			x: Object.keys(keyCount[0]),
+			y: Object.values(keyCount[0]),
+			name: "Major",
 			type: "bar"
-		}];
+		};
+
+		var trace2 = {
+			x: Object.keys(keyCount[1]),
+			y: Object.values(keyCount[1]),
+			name: "Minor",
+			type: "bar"
+		};
+
+		var data = [trace1, trace2]
 
 		var layout = {
+			barmode: "stack",
 			title: "Key Signature",
 			font: {
 				family: "Raleway, sans-serif"
