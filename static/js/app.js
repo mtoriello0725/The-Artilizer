@@ -34,6 +34,6 @@ if (window.location.pathname == "/artist/display") {
 	// show other bar charts:
 	keyBarchart(searchArtist);
 	tempoHistogram(searchArtist);
-	modeBarchart(searchArtist);
+	// modeBarchart(searchArtist);
 	durationHistogram(searchArtist);
 }
