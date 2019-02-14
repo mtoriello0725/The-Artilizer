@@ -3,7 +3,7 @@ import sys
 ############################
 # Import functions from src
 from src.spotipyMongoCollection import artistCollection
-# from config import *
+from config import *
 ############################
 # Import spotipy
 # import spotipy
@@ -154,28 +154,80 @@ def artistKeyToJson(artistInput):
 
 	attrDict = {
 		"_id": False,
-		"key": True
+		"key": True,
+		"mode": True
 	}
 
-	keyCount = {
-	    "C": 0,
-	    "C#/Db": 0,
-	    "D": 0,
-	    "D#/Eb": 0,
-	    "E": 0,
-	    "F": 0,
-	    "F#/Gb": 0,
-	    "G": 0,
-	    "G#/Ab": 0,
-	    "A": 0,
-	    "A#/Bb": 0,
-	    "B": 0,
+	majorKeyMap = {
+	    0:"C/Am",
+	    1:"Db/Bbm",
+	    2:"D/Bm",
+	    3:"Eb/Cm",
+	    4:"E/Dbm",
+	    5:"F/Dm",
+	    6:"Gb/Ebm",
+	    7:"G/Em",
+	    8:"Ab/Fm",
+	    9:"A/Gbm",
+	    10:"Bb/Gm",
+	    11:"B/Abm",
+	}
+
+	minorKeyMap = {
+	    0:"Eb/Cm",
+	    1:"E/Dbm",
+	    2:"F/Dm",
+	    3:"Gb/Ebm",
+	    4:"G/Em",
+	    5:"Ab/Fm",
+	    6:"A/Gbm",
+	    7:"Bb/Gm",
+	    8:"B/Abm",
+	    9:"C/Am",
+	    10:"Db/Bbm",
+	    11:"D/Bm",    
+	}	
+
+	majorKeyCount = {
+	    "C/Am": 0,
+	    "Db/Bbm": 0,
+	    "D/Bm": 0,
+	    "Eb/Cm": 0,
+	    "E/Dbm": 0,
+	    "F/Dm": 0,
+	    "Gb/Ebm": 0,
+	    "G/Em": 0,
+	    "Ab/Fm": 0,
+	    "A/Gbm": 0,
+	    "Bb/Gm": 0,
+	    "B/Abm": 0,
+	}
+
+	minorKeyCount = {
+	    "C/Am": 0,
+	    "Db/Bbm": 0,
+	    "D/Bm": 0,
+	    "Eb/Cm": 0,
+	    "E/Dbm": 0,
+	    "F/Dm": 0,
+	    "Gb/Ebm": 0,
+	    "G/Em": 0,
+	    "Ab/Fm": 0,
+	    "A/Gbm": 0,
+	    "Bb/Gm": 0,
+	    "B/Abm": 0,
 	}
 	# iterate through collection and pull all records, but only for above columns:
 	for i in artistCollection.find({}, attrDict):
-		keyCount[i["key"]]+=1
+		# If statements to seperate major and minor modes.
+		if i["mode"] == "Major":
+			majorKeyCount[majorKeyMap[i["key"]]]+=1
+		elif i["mode"] == "Minor":
+			minorKeyCount[minorKeyMap[i["key"]]]+=1
+		else:
+			continue
 
-	return jsonify(keyCount)
+	return jsonify([majorKeyCount,minorKeyCount])
 	
 @app.route("/api/artist/tempoHistogram/<artistInput>")
 def artistTempoToJson(artistInput):
