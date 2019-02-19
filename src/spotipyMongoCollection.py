@@ -120,6 +120,14 @@ def artistCollection(artist, db):
 	albumArtwork = [album["images"][0]["url"] for album in albums["items"]]
 	albumReleaseDate = [album["release_date"] for album in albums["items"]]
 
+	"""
+	At this point, could use popularity and release date for line graph metrics:
+
+	ex1. year vs (popularity/acousticness/danceability): scatter plot top tracks
+	ex2. Histograms should be lines instead of bars: should have circles for every top track on the line.
+	ex3. key Signature should have a major and minor count.
+	"""
+
 	# Collect all tracks from each album. Tracks will be stored in lists per album
 	# ex. 5 albums means tracksByAlbum will contain 5 lists.
 	tracksByAlbum = [sp.album_tracks(albumID) for albumID in albumIDs]
