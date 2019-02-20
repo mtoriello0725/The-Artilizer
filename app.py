@@ -5,18 +5,15 @@ import sys
 from src.spotipyMongoCollection import artistCollection
 from config import *
 ############################
-# Import spotipy
-# import spotipy
-# import spotipy.util as util
-# import spotipy.oauth2 as oauth
-############################
 #Import PyMongo
 import pymongo
 ############################
 # Import Flask
 from flask import Flask, jsonify, render_template, redirect, request
 ############################
-# Import data processing packages.
+# Import data processing packages
+import numpy as np
+import pandas as pd
 
 ################################################
 # Flask Application:
@@ -24,14 +21,7 @@ from flask import Flask, jsonify, render_template, redirect, request
 
 app = Flask(__name__)
 
-# Could also append a tracks table with all songs ever collected, and sort by artist_id
-	# This would allow for multiple users to use the application
-		# do track numbers have a part in song attributes?
-		# is there a coorelation between danceability and popularity?
-
-## Configure mongodb:
-
-# Try and Except for mongo connection
+## Configure MongoDB Connection:
 try: 
 	conn = os.getenv("MONGODB_URI")
 	mongoClient = pymongo.MongoClient(conn)
@@ -45,26 +35,25 @@ except:
 # Configure Routes:
 ################################################
 
-# home route will render standard home page:
+##### home route will render standard home page:
 @app.route("/")
 def homePage():
 
 	return render_template("home.html")
 
-# about route will render description about the app, and why it was created
+##### about route will render description about the app, and why it was created
 @app.route("/about")
 def aboutPage():
 
 	return render_template("about.html")
 
-# Contact page that has a link to the repo, as well as a card with my name, number, email, linkedin, github, and website url 
+##### Contact page that has a link to the repo, as well as a card with my name, number, email, linkedin, github, and website url 
 @app.route("/contact")
 def contactPage():
 
 	return render_template("contact.html")
 
-
-# display route will be seen as artist followed by actual artist name:
+##### display route will be seen as artist followed by actual artist name:
 @app.route("/artist/display", methods=["GET", "POST"])
 def artistDisplay():
 
@@ -72,7 +61,7 @@ def artistDisplay():
 
 	return render_template("display.html", artistCollected=artistCollected)
 
-# Collect Artist information based on search tag (artist-input)
+##### Collect Artist information based on search tag (artist-input)
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
 	if request.method == "POST":
@@ -88,7 +77,7 @@ def collect():
 
 	return render_template("home.html")
 
-# Folowing routes pull data from pymongo for each attribute collected
+##### Collect Top Tracks for selected artist
 @app.route("/api/artist/topTracks/<artistInput>")
 def artistTopTracks(artistInput):
 
@@ -104,6 +93,7 @@ def artistTopTracks(artistInput):
 
 	return jsonify(topTracksData)
 
+##### Collect album artwork for selected artist
 @app.route("/api/artist/albumArtwork/<artistInput>")
 def artistAlbumArtwork(artistInput):
 
@@ -119,7 +109,49 @@ def artistAlbumArtwork(artistInput):
 
 	return jsonify(albumArtworkData)
 
+##### Create dataset to process avg attributes plot.
+@app.route("api/artist/attrcompare/<artistInput>")
+def artistAttrToJson2(artistInput):
 
+	""" Notes for new graph:
+	Will need to import pandas
+
+	step 1: Pull all necessary columns from MongoDB
+		- acousticness, danceability, valence, release_date, popularity(when available)
+	step 2: Convert Dataset to Pandas Dataframe
+	step 3: Groupby album and calculate {Q1, mean, Q3}
+	step 4: Create new Dataframe for each calculation
+	step 5: Combine results into one json collection
+
+	Extra:
+	step 6: Add top tracks as a scatter plot... Will probably use the topTracks API call above.
+	"""
+
+	# Step 1:
+	artistCollection = db[artistInput]
+
+	attrDict = {
+		"_id": False,
+		"acousticness": True,
+		"danceability": True,
+		"valence": True,
+		"album_name": True,
+		"album_release_date": True
+	}
+
+	attrData = []
+
+	for i in artistCollection.find({}, attrDict):
+		attrData.append(i)
+
+	# Step 2: attrData is now 5 columns
+	attrDF = pd.Dataframe(attrData)
+
+	# step 3:
+	album_groupby = attrDF.groupby("album_name")
+
+
+##### Collect attributes for boxplot... TO be decommissioned
 @app.route("/api/artist/boxplot/<artistInput>")
 def artistAttrToJson(artistInput):
 
@@ -145,7 +177,7 @@ def artistAttrToJson(artistInput):
 
 	return jsonify(boxplotData)
 
-
+##### Create Major and Minor Keycount for stacked barchart
 @app.route("/api/artist/keyBarchart/<artistInput>")
 def artistKeyToJson(artistInput):
 
@@ -228,7 +260,8 @@ def artistKeyToJson(artistInput):
 			continue
 
 	return jsonify([majorKeyCount,minorKeyCount])
-	
+
+##### Tempo Histogram... TO be modified	
 @app.route("/api/artist/tempoHistogram/<artistInput>")
 def artistTempoToJson(artistInput):
 
@@ -246,29 +279,10 @@ def artistTempoToJson(artistInput):
 		histogramData.append(i["tempo"])
 
 	return jsonify(histogramData)
-	
-@app.route("/api/artist/modeBarchart/<artistInput>")
-def artistModeToJson(artistInput):
 
-	# assign artistCollection to the desired artist!
-	artistCollection = db[artistInput]
+##### Removed Mode Bar Chart... Now Incorporated in KeyChart
 
-	attrDict = {
-		"_id": False,
-		"mode": True
-	}
-
-	modeCount = {
-	    "Minor": 0,
-	    "Major": 0,
-	}
-
-	# iterate through collection and pull all records, but only for above columns:
-	for i in artistCollection.find({}, attrDict):
-		modeCount[i["mode"]]+=1
-
-	return jsonify(modeCount)
-	
+##### Duration Histogram... TO be modified
 @app.route("/api/artist/durationHistogram/<artistInput>")
 def artistDurationToJson(artistInput):
 
@@ -279,7 +293,7 @@ def artistDurationToJson(artistInput):
 		"_id": False,
 		"duration_ms": True
 	}
-# Run the applicatio
+
 	histogramData = []
 	# iterate through collection and pull all records, but only for above columns:
 	for i in artistCollection.find({}, attrDict):
@@ -289,7 +303,6 @@ def artistDurationToJson(artistInput):
 
 	return jsonify(histogramData)
 
-
-# if file is called interactively.
+##### Run the Application if file is called interactively.
 if __name__ == "__main__":
 	app.run(debug=False)
