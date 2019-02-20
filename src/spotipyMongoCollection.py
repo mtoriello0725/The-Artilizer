@@ -137,6 +137,7 @@ def artistCollection(artist, db):
 	trackNames = []
 	trackNumbers = []
 	albumNamesPerTrack = []
+	albumReleaseDatePerTrack = []
 
 	# Append albumNames for each track:
 	for i in range(0,len(tracksByAlbum)):
@@ -147,6 +148,7 @@ def artistCollection(artist, db):
 			trackNumbers.append(track["track_number"])
 			# Append album to the row according to the first forloop:
 			albumNamesPerTrack.append(albumNames[i])
+			albumReleaseDatePerTrack.append(albumReleaseDate[i])
 
 	# Use track IDs to find all audio features in the list
 	trackFeatures = [sp.audio_features(trackIDs[i:i+50]) for i in range(0,len(trackIDs),50)]
@@ -162,6 +164,7 @@ def artistCollection(artist, db):
 		allTrackFeatures[song]["track_name"] = trackNames[song]
 		allTrackFeatures[song]["track_number"] = trackNumbers[song]
 		allTrackFeatures[song]["album_name"] = albumNamesPerTrack[song]
+		allTrackFeatures[song]["album_release_date"] = albumReleaseDatePerTrack[song]
 
 		# Append keymapping and modemapping
 		# allTrackFeatures[song]["key"] = keyMap[allTrackFeatures[song]["key"]]
