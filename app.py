@@ -119,7 +119,7 @@ def artistAttrToJson2(artistInput):
 	step 1: Pull all necessary columns from MongoDB
 		- acousticness, danceability, valence, release_date, popularity(when available)
 	step 2: Convert Dataset to Pandas Dataframe
-	step 3: Groupby album and calculate {Q1, mean, Q3}
+	step 3: Groupby album and calculate {Q1, median, Q3}
 	step 4: Create new Dataframe for each calculation
 	step 5: Combine results into one json collection
 
@@ -127,8 +127,15 @@ def artistAttrToJson2(artistInput):
 	step 6: Add top tracks as a scatter plot... Will probably use the topTracks API call above.
 	"""
 
-	# Step 1:
-	artistCollection = db[artistInput]
+	# Function used to calculate percentile
+	def percentile(n):
+	    def percentile_(x):
+	        return np.percentile(x, n)
+	    percentile_.__name__ = 'percentile_%s' % n
+	    return percentile_
+
+		# Step 1:
+		artistCollection = db[artistInput]
 
 	attrDict = {
 		"_id": False,
@@ -147,8 +154,12 @@ def artistAttrToJson2(artistInput):
 	# Step 2: attrData is now 5 columns
 	attrDF = pd.Dataframe(attrData)
 
-	# step 3:
+	# Step 3 & Step 4:
 	album_groupby = attrDF.groupby("album_name")
+	attrPercentilesDF = album_groupby.agg([percentile(25), percentile(50), percentile(75)])
+
+	# Step 5:
+	return attrPercentilesDF.to_json(orient="records")
 
 
 ##### Collect attributes for boxplot... TO be decommissioned
