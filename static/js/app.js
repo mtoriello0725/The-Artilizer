@@ -24,6 +24,8 @@ if (window.location.pathname == "/artist/display") {
 	// select the display tag and output the artist name
 	d3.select("#artist-display").text(displaySearchArtist+" Display Page!");
 
+	// INSTALL FUNCTIONS TO DISPLAY BELOW:
+
 	// Display topTracks and Artwork
 	topTracks(searchArtist);
 	albumArtwork(searchArtist);	
@@ -36,4 +38,7 @@ if (window.location.pathname == "/artist/display") {
 	tempoHistogram(searchArtist);
 	// modeBarchart(searchArtist);
 	durationHistogram(searchArtist);
+
+	// show percentile graph
+	percentileChart(searchArtist);
 }
