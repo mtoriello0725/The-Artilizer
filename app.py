@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 ############################
 # Import functions from src
 from src.spotipyMongoCollection import artistCollection
@@ -110,7 +111,7 @@ def artistAlbumArtwork(artistInput):
 	return jsonify(albumArtworkData)
 
 ##### Create dataset to process avg attributes plot.
-@app.route("api/artist/attrcompare/<artistInput>")
+@app.route("/api/artist/attrcompare/<artistInput>")
 def artistAttrToJson2(artistInput):
 
 	""" Notes for new graph:
@@ -135,7 +136,7 @@ def artistAttrToJson2(artistInput):
 	    return percentile_
 
 		# Step 1:
-		artistCollection = db[artistInput]
+	artistCollection = db[artistInput]
 
 	attrDict = {
 		"_id": False,
@@ -152,15 +153,23 @@ def artistAttrToJson2(artistInput):
 		attrData.append(i)
 
 	# Step 2: attrData is now 5 columns
-	attrDF = pd.Dataframe(attrData)
+	attrDF = pd.DataFrame(attrData)
 
-	# Step 3 & Step 4:
-	album_groupby = attrDF.groupby("album_name")
-	attrPercentilesDF = album_groupby.agg([percentile(25), percentile(50), percentile(75)])
+	attrDF["year"] = pd.to_datetime(attrDF["album_release_date"], infer_datetime_format=True).map(lambda x: x.year)
 
-	# Step 5:
-	return attrPercentilesDF.to_json(orient="records")
+	# Step 3:
+	album_groupby = attrDF.groupby(["album_name", "year"])
 
+	# Step 4 & Step 5:
+	# attrPercentilesDF = album_groupby.agg([percentile(25), percentile(50), percentile(75)])
+
+	attr_json = {
+		"acousticness": json.loads(album_groupby["acousticness"].agg([percentile(25), percentile(50), percentile(75)]).reset_index().to_json(orient="records")),
+		"danceability": json.loads(album_groupby["danceability"].agg([percentile(25), percentile(50), percentile(75)]).reset_index().to_json(orient="records")),
+		"valence": json.loads(album_groupby["valence"].agg([percentile(25), percentile(50), percentile(75)]).reset_index().to_json(orient="records")),
+	}
+
+	return jsonify(attr_json)
 
 ##### Collect attributes for boxplot... TO be decommissioned
 @app.route("/api/artist/boxplot/<artistInput>")
