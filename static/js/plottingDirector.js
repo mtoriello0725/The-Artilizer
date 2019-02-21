@@ -169,6 +169,20 @@ function boxplot(artistName) {
 
 }
 
+function percentileChart(artistName) {
+
+	var percentileURL = "/api/artist/attrcompare/"+artistName;
+
+	d3.json(percentileURL).then(function(response) {
+
+		console.log(response);
+
+		console.log(response["acousticness"])
+
+	})
+}
+
+
 function keyBarchart(artistName) {
 
 	var keyCountURL = "/api/artist/keyBarchart/"+artistName;
