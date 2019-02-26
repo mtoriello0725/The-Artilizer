@@ -22,7 +22,7 @@ if (window.location.pathname == "/artist/display") {
 	displaySearchArtist = searchArtist.replace(/_/g, " ");
 
 	// select the display tag and output the artist name
-	d3.select("#artist-display").text(displaySearchArtist+" Display Page!");
+	$("#artist-display").text(displaySearchArtist+" Display Page!");
 
 	// INSTALL FUNCTIONS TO DISPLAY BELOW:
 
@@ -31,7 +31,7 @@ if (window.location.pathname == "/artist/display") {
 	albumArtwork(searchArtist);	
 
 	// show the boxplot:
-	boxplot(searchArtist);
+	// boxplot(searchArtist);
 	
 	// show other bar charts:
 	keyBarchart(searchArtist);
@@ -41,4 +41,5 @@ if (window.location.pathname == "/artist/display") {
 
 	// show percentile graph
 	percentileChart(searchArtist);
+
 }
