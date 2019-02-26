@@ -158,7 +158,7 @@ def artistAttrToJson2(artistInput):
 	attrDF["year"] = pd.to_datetime(attrDF["album_release_date"], infer_datetime_format=True).map(lambda x: x.year)
 
 	# Step 3:
-	album_groupby = attrDF.groupby(["album_name", "year"])
+	album_groupby = attrDF.groupby(["year"])
 
 	# Step 4 & Step 5:
 	# attrPercentilesDF = album_groupby.agg([percentile(25), percentile(50), percentile(75)])
