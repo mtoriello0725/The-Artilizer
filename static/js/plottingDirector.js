@@ -173,11 +173,76 @@ function percentileChart(artistName) {
 
 	var percentileURL = "/api/artist/attrcompare/"+artistName;
 
-	d3.json(percentileURL).then(function(response) {
+	$.getJSON(percentileURL).done(function(response) {
 
-		console.log(response);
+		console.log(response["acousticness"].map(row => [row.year, row.percentile_50]));
 
-		console.log(response["acousticness"])
+		// Highcharts display! 
+		// FOr now, just plot acousticness. Later will try to make it dynamic
+		var attrChart = Highcharts.chart("percentile", {
+
+			title: {
+				text: "Attribute"
+			},
+
+			xAxis: {
+				type: "year"
+			},
+
+			yAxis: {
+				title: {
+					text: null
+				}
+			},
+
+			tooltip: {
+				crosshairs: true,
+				shared: true
+			},
+
+			legend: {
+
+			},
+
+			series: [{
+				name: "Attribute",
+				data: response["acousticness"].map(row => [row.year, row.percentile_50]),
+				zIndex: 1,
+				marker: {
+					fillColor: "white",
+					lineWidth: 2,
+					lineColor: Highcharts.getOptions().colors[0]
+				}
+			}, {
+				name: "Range",
+				data: response["acousticness"].map(row => [row.year, row.percentile_25, row.percentile_75]),
+				type: "arearange",
+				lineWidth: 0,
+				linkedTo: ":previous",
+				color: Highcharts.getOptions().colors[0],
+				fillOpacity: 0.3,
+				zIndex: 0,
+				marker: {
+					enabled: false
+				}
+
+			}]
+		});
+
+		$("#acousticness").click(function() {
+			attrChart.series[0].setData(response["acousticness"].map(row => [row.year, row.percentile_50])),
+			attrChart.series[1].setData(response["acousticness"].map(row => [row.year, row.percentile_25, row.percentile_75]))
+		});
+
+		$("#danceability").click(function() {
+			attrChart.series[0].setData(response["danceability"].map(row => [row.year, row.percentile_50])),
+			attrChart.series[1].setData(response["danceability"].map(row => [row.year, row.percentile_25, row.percentile_75]))
+		});
+
+		$("#valence").click(function() {
+			attrChart.series[0].setData(response["valence"].map(row => [row.year, row.percentile_50])),
+			attrChart.series[1].setData(response["valence"].map(row => [row.year, row.percentile_25, row.percentile_75]))
+		});		
 
 	})
 }
