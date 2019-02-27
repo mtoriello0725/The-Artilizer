@@ -174,9 +174,30 @@ def artistCollection(artist, db):
 	# Add a mongodb record for top tracks
 	topTracks = sp.artist_top_tracks(targetArtistID)
 	topTrackNames = [track["name"] for track in topTracks["tracks"]]
+	topTrackReleaseDates = [track["album"]["release_date"] for track in topTracks["tracks"]]
+	topTrackIDs = [track["id"] for track in topTracks["tracks"]]
+	topTrackFeatures = sp.audio_features(topTrackIDs)
+
+	topTrackList = []
+	for i in range(0,len(topTrackIDs[0:5])):
+
+		# Build dictionary of top track attributes
+		trackDict = {
+			"name": topTrackNames[i],
+			"acousticness": topTrackFeatures[i]["acousticness"],
+			"danceability": topTrackFeatures[i]["danceability"],
+			"valence": topTrackFeatures[i]["valence"],
+			"tempo": topTrackFeatures[i]["tempo"],
+			"duration_ms": topTrackFeatures[i]["duration_ms"],
+			"album_release_date": topTrackReleaseDates[i],
+		}
+
+		# Append topTrackList
+		topTrackList.append(trackDict)
+
 
 	# Top Tracks list to Json format
-	topTracksRecord = {"artist":targetArtistName, "tracks":topTrackNames[0:5]}
+	topTracksRecord = {"artist":targetArtistName, "tracks":topTrackList}
 
 
 	# Add a mongoDB record for 8 recent album artworks
