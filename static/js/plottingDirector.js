@@ -5,7 +5,9 @@ function topTracks(artistName) {
 	var topTracksURL = "/api/artist/topTracks/"+artistName;
 
 	$.getJSON(topTracksURL).done(function(response) {
-		var artistTracks = response["tracks"];
+
+		// All this needs to change when topTracks API changes
+		var artistTracks = response["tracks"].map(row => row.name);
 
 		var ul = d3.select(".top-tracks");
 
@@ -122,8 +124,6 @@ function percentileChart(artistName) {
 
 	$.getJSON(percentileURL).done(function(response) {
 
-		console.log(response["acousticness"].map(row => [row.year, row.percentile_50]));
-
 		// Highcharts display! 
 		// FOr now, just plot acousticness. Later will try to make it dynamic
 		var attrChart = Highcharts.chart("percentile", {
@@ -213,8 +213,6 @@ function keyBarchart(artistName) {
 	$.getJSON(keyCountURL).done(function(response) {
 
 		keyCount = response;
-
-		console.log(keyCount);
 
 		var trace1 = {
 			x: Object.keys(keyCount[0]),
