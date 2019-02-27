@@ -4,7 +4,7 @@ function topTracks(artistName) {
 
 	var topTracksURL = "/api/artist/topTracks/"+artistName;
 
-	d3.json(topTracksURL).then(function(response) {
+	$.getJSON(topTracksURL).done(function(response) {
 		var artistTracks = response["tracks"];
 
 		var ul = d3.select(".top-tracks");
@@ -25,7 +25,7 @@ function albumArtwork(artistName) {
 
 	var albumArtworkURL = "/api/artist/albumArtwork/"+artistName;
 
-	d3.json(albumArtworkURL).then(function(response) {
+	$.getJSON(albumArtworkURL).done(function(response) {
 		var artwork  = response["artwork"];
 
 		var album_list = d3.select(".thumbnail-section");
@@ -47,7 +47,7 @@ function boxplot(artistName) {
 
 	var boxplotURL = "/api/artist/boxplot/"+artistName;
 
-	d3.json(boxplotURL).then(function(response) {
+	$.getJSON(boxplotURL).done(function(response) {
 		var boxplotData = response;
 
 		// Data comes through perfectly. For now, use plotly for a boxplot! 
@@ -112,59 +112,6 @@ function boxplot(artistName) {
 
 		Plotly.newPlot("boxplot", data, layout);
 
-		// // Now using Highcharts:
-
-		// var acousticnessData = Object.values(boxplotData.map(row => row.acousticness)).sort(function(a, b){return a - b});
-
-		// Highcharts.chart("boxplot", {
-
-		// 	chart: {
-		// 		type: "boxplot"
-		// 	},
-
-		// 	title: {
-		// 		text: "Highchart Boxplot"
-		// 	},
-
-		// 	legend: {
-		// 		enabled: false
-		// 	},
-
-		// 	xAxis: {
-		// 		categories: ['Acousticness', '2'],
-		// 		title: {
-		// 			text: "Musical Attribute"
-		// 		}
-		// 	},
-
-		// 	yAxis: {
-		// 		title: {
-		// 			text: "Attribute Level"
-		// 		}
-		// 	},
-
-		// 	series: [{
-		// 		name: "Attribute",
-		// 		data: [
-		// 			acousticnessData,
-  //           		[.5, .8, .6, .2, .3],
-		// 			// Object.values(boxplotData.map(row => row.acousticness)),
-		// 			// Object.values(boxplotData.map(row => row.danceability)),
-		// 			// Object.values(boxplotData.map(row => row.energy)),
-		// 			// Object.values(boxplotData.map(row => row.instrumentalness)),
-		// 			// Object.values(boxplotData.map(row => row.liveness)),
-		// 			// Object.values(boxplotData.map(row => row.speechiness)),
-		// 			// Object.values(boxplotData.map(row => row.valence)),
-		// 		],
-		// 		tooltip: {
-		// 			headerFormat: "<em>Attribute {point.key}</em><br/>"
-		// 		}
-
-		// 	}]
-
-		// })
-
-
 	});
 
 }
@@ -182,7 +129,7 @@ function percentileChart(artistName) {
 		var attrChart = Highcharts.chart("percentile", {
 
 			title: {
-				text: "Attribute"
+				text: "Acousticness"
 			},
 
 			xAxis: {
@@ -191,8 +138,10 @@ function percentileChart(artistName) {
 
 			yAxis: {
 				title: {
-					text: null
-				}
+					text: "Acousticness"
+				},
+				min: 0,
+				max: 1
 			},
 
 			tooltip: {
@@ -205,7 +154,7 @@ function percentileChart(artistName) {
 			},
 
 			series: [{
-				name: "Attribute",
+				name: "Median Acousticness",
 				data: response["acousticness"].map(row => [row.year, row.percentile_50]),
 				zIndex: 1,
 				marker: {
@@ -230,16 +179,25 @@ function percentileChart(artistName) {
 		});
 
 		$("#acousticness").click(function() {
+			attrChart.setTitle({text: "Acousticness"}),
+			attrChart.yAxis[0].setTitle({text: "Acousticness"}),
+			attrChart.series[0].setName("Median Acousticness"),
 			attrChart.series[0].setData(response["acousticness"].map(row => [row.year, row.percentile_50])),
 			attrChart.series[1].setData(response["acousticness"].map(row => [row.year, row.percentile_25, row.percentile_75]))
 		});
 
 		$("#danceability").click(function() {
+			attrChart.setTitle({text: "Danceability"}),
+			attrChart.yAxis[0].setTitle({text: "Danceability"}),
+			attrChart.series[0].setName("Median Danceability"),
 			attrChart.series[0].setData(response["danceability"].map(row => [row.year, row.percentile_50])),
 			attrChart.series[1].setData(response["danceability"].map(row => [row.year, row.percentile_25, row.percentile_75]))
 		});
 
 		$("#valence").click(function() {
+			attrChart.setTitle({text: "Valence"}),
+			attrChart.yAxis[0].setTitle({text: "Valence"}),
+			attrChart.series[0].setName("Median Valence"),
 			attrChart.series[0].setData(response["valence"].map(row => [row.year, row.percentile_50])),
 			attrChart.series[1].setData(response["valence"].map(row => [row.year, row.percentile_25, row.percentile_75]))
 		});		
@@ -252,7 +210,7 @@ function keyBarchart(artistName) {
 
 	var keyCountURL = "/api/artist/keyBarchart/"+artistName;
 
-	d3.json(keyCountURL).then(function(response) {
+	$.getJSON(keyCountURL).done(function(response) {
 
 		keyCount = response;
 
@@ -301,7 +259,7 @@ function tempoHistogram(artistName) {
 
 	var tempoURL = "/api/artist/tempoHistogram/"+artistName;
 
-	d3.json(tempoURL).then(function(response) {
+	$.getJSON(tempoURL).done(function(response) {
 
 		tempoList = response;
 
@@ -323,7 +281,7 @@ function modeBarchart(artistName) {
 
 	var modeCountURL = "/api/artist/modeBarchart/"+artistName;
 
-	d3.json(modeCountURL).then(function(response) {
+	$.getJSON(modeCountURL).done(function(response) {
 
 		modeCount = response;
 
@@ -359,7 +317,7 @@ function durationHistogram(artistName) {
 
 	var durationURL = "/api/artist/durationHistogram/"+artistName;
 
-	d3.json(durationURL).then(function(response) {
+	$.getJSON(durationURL).done(function(response) {
 
 		durationList = response;
 
